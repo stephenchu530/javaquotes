@@ -3,7 +3,7 @@
 ## Description
 This project uses Java to randomly pick a book quote from a json file and display it to the screen.
 
-## Usage
+## Installation
 ```
  $ git clone git@github.com:stephenchu530/javaquotes.git
 ```
@@ -11,7 +11,8 @@ or
 ```
  $ git clone https://github.com/stephenchu530/javaquotes.git
 ```
-then
+
+## Usage
 ```
  $ ./gradlew run
 ```
