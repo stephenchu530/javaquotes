@@ -4,29 +4,77 @@
 package javaquotes;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import java.io.*;
-import java.util.Random;
-import java.util.Scanner;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
 
 public class App {
     public static void main(String[] args) {
-        System.out.println(new App().getQuote());
+        String quote = null;
+        quote = getInternetQuote();
+        if (quote == null) {
+            quote = getQuoteFromFile();
+        }
+        System.out.println(quote);
     }
 
-    public String getQuote() {
-        StringBuilder fileInput = new StringBuilder();
+    public static String getInternetQuote() {
         try {
-            Scanner sc = new Scanner(new File("src/main/resources/recentquotes.json"));
-            while (sc.hasNextLine()) {
-                fileInput.append(sc.nextLine());
-            }
+            URL url = new URL("http://ron-swanson-quotes.herokuapp.com/v2/quotes");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestProperty("Content-Type","application/json");
+            con.setRequestMethod("GET");
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String content = in.readLine();
+            in.close();
+            con.disconnect();
+
+            Gson gson = new Gson();
+            String newQuoteJson = gson.toJson(new Quote("Ron Swanson", content.substring(2,content.length() - 2)));
+            Quote quote = gson.fromJson(newQuoteJson, Quote.class);
+            addQuoteToFile(quote);
+            return quote.getText();
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String getQuoteFromFile() {
+        try {
+            Gson gson = new Gson();
+            Reader file = new FileReader("src/main/resources/recentquotes.json");
+            Quote[] quotes = gson.fromJson(file, Quote[].class);
+            Random rand = new Random();
+            return quotes[rand.nextInt(quotes.length)].getText();
+        } catch(Exception e) {
             // Ignore
         }
-        Gson gson = new Gson();
-        Quotes quotes[] = gson.fromJson(fileInput.toString(), Quotes[].class);
-        Random rand = new Random();
-        return quotes[rand.nextInt(quotes.length)].getText();
+        return "";
+    }
+
+    public static void addQuoteToFile(Quote quote) {
+        try {
+            // Ensure pretty print!
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+            Reader file = new FileReader("src/main/resources/recentquotes.json");
+
+            // The following from: https://sites.google.com/site/gson/gson-user-guide
+            Type collectionType = new TypeToken<Collection<Quote>>(){}.getType();
+            Collection<Quote> quotes = gson.fromJson(file, collectionType);
+            quotes.add(quote);
+
+            FileWriter fileWriter = new FileWriter("src/main/resources/recentquotes.json");
+            fileWriter.write(gson.toJson(quotes));
+            fileWriter.close();
+
+        } catch(Exception e) {
+            // Ignore
+        }
     }
 }
 

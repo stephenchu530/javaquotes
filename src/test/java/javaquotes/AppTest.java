@@ -10,6 +10,6 @@ public class AppTest {
     @Test
     public void testAppHasQuotes() {
         App classUnderTest = new App();
-        assertNotNull("Should not be null", classUnderTest.getQuote());
+        assertNotNull("Should not be null", classUnderTest.getQuoteFromFile());
     }
 }
