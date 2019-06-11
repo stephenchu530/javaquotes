@@ -15,38 +15,22 @@ public class Quotes {
         return new ArrayList<String>(this.tags);
     }
 
-    public void setTags(List<String> tags) {
-        this.tags = new ArrayList<String>(tags);
-    }
-
     public String getAuthor() {
         return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public String getLikes() {
         return likes;
     }
 
-    public void setLikes(String likes) {
-        this.likes = likes;
-    }
-
     public String getText() {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public Quotes(List<String> tags, String author, String likes, String text) {
-        this.setTags(tags);
-        this.setAuthor(author);
-        this.setLikes(likes);
-        this.setText(text);
+        this.tags = new ArrayList<String>(tags);
+        this.author = author;
+        this.likes = likes;
+        this.text = text;
     }
 }
