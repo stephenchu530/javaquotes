@@ -10,21 +10,18 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
-        System.out.println(new App().getQuote());
+        System.out.println(new App().getQuoteFromFile());
     }
 
-    public String getQuote() {
-        StringBuilder fileInput = new StringBuilder();
+    public String getQuoteFromFile() {
+        Gson gson = new Gson();
+        Reader file = null;
         try {
-            Scanner sc = new Scanner(new File("src/main/resources/recentquotes.json"));
-            while (sc.hasNextLine()) {
-                fileInput.append(sc.nextLine());
-            }
-        } catch (Exception e) {
+            file = new FileReader("src/main/resources/recentquotes.json");
+        } catch(Exception e) {
             // Ignore
         }
-        Gson gson = new Gson();
-        Quotes quotes[] = gson.fromJson(fileInput.toString(), Quotes[].class);
+        Quotes quotes[] = gson.fromJson(file, Quotes[].class);
         Random rand = new Random();
         return quotes[rand.nextInt(quotes.length)].getText();
     }
